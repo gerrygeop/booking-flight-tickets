@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TransactionPassenger extends Model
@@ -20,5 +21,10 @@ class TransactionPassenger extends Model
     public function transaction()
     {
         return $this->belongsTo(Transaction::class);
+    }
+
+    public function seat(): BelongsTo
+    {
+        return $this->belongsTo(FlightSeat::class);
     }
 }
