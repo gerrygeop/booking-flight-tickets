@@ -17,9 +17,9 @@ class FlightRepository implements FlightRepositoryInterface
             });
         }
 
-        if (!empty($filter['destination'])) {
+        if (!empty($filter['arrival'])) {
             $flights->whereHas('segments', function ($query) use ($filter) {
-                $query->where('airport_id', $filter['destination'])->orderBy('sequence', 'desc')->limit(1);
+                $query->where('airport_id', $filter['arrival'])->orderBy('sequence', 'desc')->limit(1);
             });
         }
 
@@ -32,7 +32,7 @@ class FlightRepository implements FlightRepositoryInterface
         return $flights->get();
     }
 
-    public function getAirportByFlightNumber($flightNumber)
+    public function getFlightByFlightNumber($flightNumber)
     {
         return Flight::where('flight_number', $flightNumber)->first();
     }
