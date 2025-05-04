@@ -22,7 +22,7 @@ class TransactionRepository implements TransactionRepositoryInterface
             $transaction[$key] = $value;
         }
 
-        session()->get('transaction', $transaction);
+        session()->put('transaction', $transaction);
     }
 
     public function saveTransaction($data)
