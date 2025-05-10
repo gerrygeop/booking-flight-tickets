@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Interfaces\TransactionRepositoryInterface;
 use App\Models\FlightClass;
+use App\Models\PromoCode;
 use App\Models\Transaction;
 use App\Models\TransactionPassenger;
 
@@ -31,13 +32,13 @@ class TransactionRepository implements TransactionRepositoryInterface
         $data['number_of_passengers'] = $this->countPassengers($data['passengers']);
 
         $data['subtotal'] = $this->calculateSubtotal($data['flight_class_id'], $data['number_of_passengers']);
-        $data['grandTotal'] = $data['subtotal'];
+        $data['grandtotal'] = $data['subtotal'];
 
         if (!empty($data['promo_code'])) {
             $data = $this->applyPromoCode($data);
         }
 
-        $data['grandTotal'] = $this->addPPN($data['grandTotal']);
+        $data['grandtotal'] = $this->addPPN($data['grandtotal']);
 
         $transaction = $this->createTransaction($data);
         $this->savePassengers($data['passengers'], $transaction->id);
@@ -64,7 +65,7 @@ class TransactionRepository implements TransactionRepositoryInterface
 
     private function applyPromoCode($data)
     {
-        $promo = PromoCode::where('code', $data['promo_code'])
+        $promo =  PromoCode::where('code', $data['promo_code'])
             ->where('valid_until', '>=', now())
             ->where('is_used', false)
             ->first();
@@ -78,7 +79,7 @@ class TransactionRepository implements TransactionRepositoryInterface
             : $promo->discount;
 
         $data['discount'] = $discountAmount;
-        $data['grandtotal'] = max(0, $data['grandtotal'] - $data['discount']);
+        $data['grandtotal'] -= $data['discount'];
         $data['promo_code_id'] = $promo->id;
 
         $promo->update(['is_used' => true]);
@@ -110,8 +111,8 @@ class TransactionRepository implements TransactionRepositoryInterface
         return Transaction::where('code', $code)->first();
     }
 
-    public function getTransactionByCodeEmailPhone($code, $email, $phone)
+    public function getTransactionByCodePhone($code, $phone)
     {
-        return Transaction::where('code', $code)->where('email', $email)->where('phone', $phone)->first();
+        return Transaction::where('code', $code)->where('phone', $phone)->first();
     }
 }
