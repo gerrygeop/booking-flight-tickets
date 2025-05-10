@@ -26,7 +26,7 @@ class CheckPromoCode extends Component
 
     private function findPromoCode($promoCode)
     {
-        return PromoCode::where('code', '=', $promoCode)
+        return PromoCode::where('code', $promoCode)
             ->where('valid_until', '>=', now())
             ->where('is_used', false)
             ->first();
