@@ -56,29 +56,24 @@ class TransactionResource extends Resource
                                 Forms\Components\Repeater::make('passenger')
                                     ->relationship('passengers')
                                     ->schema([
-                                        Forms\Components\TextInput::make('seat.name')
+                                        Forms\Components\Select::make('flight_seat_id')
                                             ->label('Seat Name')
-                                            ->required()
-                                            ->maxLength(255),
+                                            ->relationship('seat', 'name')
+                                            ->required(),
                                         Forms\Components\TextInput::make('name')
-                                            ->required()
-                                            ->maxLength(255),
-                                        Forms\Components\DatePicker::make('date_of_birth')
+                                            ->required(),
+                                        Forms\Components\TextInput::make('date_of_birth')
                                             ->required(),
                                         Forms\Components\TextInput::make('nationality')
-                                            ->required()
-                                            ->maxLength(255),
+                                            ->required(),
                                     ]),
                             ]),
                     ]),
 
                 Forms\Components\Section::make('Pembayaran')
                     ->schema([
-                        Forms\Components\TextInput::make('promo.code')
-                            ->numeric(),
-                        Forms\Components\TextInput::make('promo.discount_type'),
-                        Forms\Components\TextInput::make('promo.discount')
-                            ->numeric(),
+                        Forms\Components\Select::make('promo_code_id')
+                            ->relationship('promo', 'code'),
                         Forms\Components\TextInput::make('payment_status')
                             ->required(),
                         Forms\Components\TextInput::make('subtotal')
