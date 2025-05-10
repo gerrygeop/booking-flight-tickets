@@ -186,7 +186,7 @@
                                     border-red-500
                                 @enderror">
 								<img src="{{ asset('assets/images/icons/profile-black.svg') }}" class="w-5 flex shrink-0" alt="icon">
-								<input type="text" name="name" id=""
+								<input type="text" name="name"
 									class="appearance-none outline-none w-full font-semibold placeholder:font-normal"
 									placeholder="Write your complete name">
 							</div>
@@ -201,7 +201,7 @@
                                     border-red-500
                                 @enderror">
 								<img src="{{ asset('assets/images/icons/sms-black.png') }}" class="w-5 flex shrink-0" alt="icon">
-								<input type="email" name="email" id=""
+								<input type="email" name="email"
 									class="appearance-none outline-none w-full font-semibold placeholder:font-normal"
 									placeholder="Write your valid email">
 							</div>
@@ -216,7 +216,7 @@
                                     border-red-500
                                 @enderror">
 								<img src="{{ asset('assets/images/icons/call-black.svg') }}" class="w-5 flex shrink-0" alt="icon">
-								<input type="tel" name="phone" id=""
+								<input type="tel" name="phone"
 									class="appearance-none outline-none w-full font-semibold placeholder:font-normal"
 									placeholder="Write your active number">
 							</div>
@@ -229,6 +229,8 @@
 
 				<!-- for accordions with select input inside, the script was different from the normal accordion -->
 				@foreach ($transaction['selected_seats'] as $passenger)
+					<input type="hidden" name="passengers[{{ $loop->index }}][flight_seat_id]" value="{{ $passenger }}">
+
 					<div id="Passenger-{{ $loop->index + 1 }}"
 						class="accordion-with-select group flex flex-col h-fit rounded-[20px] bg-white overflow-hidden transition-all duration-300">
 						<button type="button" class="accordion-btn flex items-center justify-between p-5">
@@ -244,7 +246,7 @@
                                     border-red-500
                                 @enderror">
 									<img src="{{ asset('assets/images/icons/profile-black.svg') }}" class="w-5 flex shrink-0" alt="icon">
-									<input type="text" name="passengers[{{ $loop->index }}][name]" id=""
+									<input type="text" name="passengers[{{ $loop->index }}][name]"
 										class="appearance-none outline-none w-full font-semibold placeholder:font-normal"
 										placeholder="Write your complete name">
 								</div>

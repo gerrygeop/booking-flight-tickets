@@ -180,7 +180,10 @@
 				</div>
 			</div>
 
-			<form action="success-booking.html" id="Right-Content" class="flex flex-col gap-[30px] w-[490px] shrink-0">
+			<form action="{{ route('booking.payment', $flight->flight_number) }}" method="POST" id="Right-Content"
+				class="flex flex-col gap-[30px] w-[490px] shrink-0">
+				@csrf
+
 				<div id="Customer-Info"
 					class="accordion group flex flex-col h-fit rounded-[20px] bg-white overflow-hidden has-[:checked]:!h-[75px] transition-all duration-300">
 					<label class="flex items-center justify-between p-5">
@@ -195,7 +198,7 @@
 							<div
 								class="flex items-center rounded-full border border-garuda-black py-3 px-5 gap-[10px] focus-within:border-[#0068FF] transition-all duration-300">
 								<img src="{{ asset('assets/images/icons/profile-black.svg') }}" class="w-5 flex shrink-0" alt="icon">
-								<input type="text" name="" id="" value="{{ $transaction['name'] }}" readonly
+								<input type="text" name="name" value="{{ $transaction['name'] }}" readonly
 									class="appearance-none outline-none w-full font-semibold placeholder:font-normal"
 									placeholder="Write your complete name">
 							</div>
@@ -205,7 +208,7 @@
 							<div
 								class="flex items-center rounded-full border border-garuda-black py-3 px-5 gap-[10px] focus-within:border-[#0068FF] transition-all duration-300">
 								<img src="{{ asset('assets/images/icons/sms-black.png') }}" class="w-5 flex shrink-0" alt="icon">
-								<input type="email" name="" id="" value="{{ $transaction['email'] }}" readonly
+								<input type="email" name="email" value="{{ $transaction['email'] }}" readonly
 									class="appearance-none outline-none w-full font-semibold placeholder:font-normal"
 									placeholder="Write your valid email">
 							</div>
@@ -215,7 +218,7 @@
 							<div
 								class="flex items-center rounded-full border border-garuda-black py-3 px-5 gap-[10px] focus-within:border-[#0068FF] transition-all duration-300">
 								<img src="{{ asset('assets/images/icons/call-black.svg') }}" class="w-5 flex shrink-0" alt="icon">
-								<input type="tel" name="" id="" value="{{ $transaction['phone'] }}" readonly
+								<input type="tel" name="phone" value="{{ $transaction['phone'] }}" readonly
 									class="appearance-none outline-none w-full font-semibold placeholder:font-normal"
 									placeholder="Write your active number">
 							</div>
@@ -224,6 +227,9 @@
 				</div>
 				<!-- for accordions with select input inside, the script was different from the normal accordion -->
 				@foreach ($transaction['passengers'] as $passenger)
+					<input type="hidden" name="passengers[{{ $loop->index }}][flight_seat_id]"
+						value="{{ $passenger['flight_seat_id'] }}">
+
 					<div id="Passenger-{{ $loop->index + 1 }}"
 						class="accordion-with-select group flex flex-col h-fit rounded-[20px] bg-white overflow-hidden transition-all duration-300">
 						<button type="button" class="accordion-btn flex items-center justify-between p-5">
@@ -250,7 +256,8 @@
 							<div class="flex flex-col gap-[10px]">
 								<p class="font-semibold">Date of Birth</p>
 								<input type="hidden" name="passengers[{{ $loop->index }}][date_of_birth]"
-									id="dateOfBirth-{{ $loop->index }}" data-index="{{ $loop->index }}">
+									id="dateOfBirth-{{ $loop->index }}" value="{{ $passenger['date_of_birth'] }}"
+									data-index="{{ $loop->index }}">
 
 								<div class="flex items-center gap-[10px]">
 									<label
@@ -259,12 +266,12 @@
                                 @enderror">
 										<img src="{{ asset('assets/images/icons/note-add-black.svg') }}"
 											class="absolute transform -translate-y-1/2 top-1/2 left-5 w-5 shrink-0" alt="icon">
-										<select id="day-select-{{ $loop->index }}" name="" data-index="{{ $loop->index }}"
+										<select id="day-select-{{ $loop->index }}" data-index="{{ $loop->index }}"
 											onchange="updateDateOfBirth({{ $loop->index }})"
 											class="date-select day-select appearance-none w-full outline-none pl-[50px] py-3 px-5 font-semibold indeterminate:!font-normal">
 											@for ($i = 1; $i <= 31; $i++)
-												<option value="{{ $i }}">
-													{{ \Carbon\Carbon::parse($passenger['date_of_birth'])->format('d') == $i ? 'selected' : '' }}
+												<option value="{{ $i }}"
+													{{ \Carbon\Carbon::parse($passenger['date_of_birth'])->format('d') == $i ? 'selected' : '' }}>
 													{{ $i }}
 												</option>
 											@endfor
@@ -277,12 +284,13 @@
                                 @enderror">
 										<img src="{{ asset('assets/images/icons/note-add-black.svg') }}"
 											class="absolute transform -translate-y-1/2 top-1/2 left-5 w-5 shrink-0" alt="icon">
-										<select id="month-select-{{ $loop->index }}" name=""
+										<select id="month-select-{{ $loop->index }}"
 											class="date-select month-select appearance-none w-full outline-none pl-[50px] py-3 px-5 font-semibold indeterminate:!font-normal"
 											data-index="{{ $loop->index }}" onchange="updateDateOfBirth({{ $loop->index }})">
 											@for ($i = 1; $i <= 12; $i++)
-												<option value="{{ $i }}">
-													{{ \Carbon\Carbon::parse($passenger['date_of_birth'])->format('m') == $i ? 'selected' : '' }}
+												<option value="{{ $i }}"
+													{{ \Carbon\Carbon::parse($passenger['date_of_birth'])->format('m') == $i ? 'selected' : '' }}>
+
 													{{ $i }}
 												</option>
 											@endfor
@@ -295,12 +303,13 @@
                                 @enderror">
 										<img src="{{ asset('assets/images/icons/note-add-black.svg') }}"
 											class="absolute transform -translate-y-1/2 top-1/2 left-5 w-5 shrink-0" alt="icon">
-										<select id="year-select-{{ $loop->index }}" name=""
+										<select id="year-select-{{ $loop->index }}"
 											class="date-select year-select appearance-none w-full outline-none pl-[50px] py-3 px-5 font-semibold indeterminate:!font-normal"
 											data-index="{{ $loop->index }}" onchange="updateDateOfBirth({{ $loop->index }})">
-											@for ($i = date('Y'); $i <= 1900; $i++)
-												<option value="{{ $i }}">
-													{{ \Carbon\Carbon::parse($passenger['date_of_birth'])->format('Y') == $i ? 'selected' : '' }}
+											@for ($i = 1900; $i <= date('Y'); $i++)
+												<option value="{{ $i }}"
+													{{ \Carbon\Carbon::parse($passenger['date_of_birth'])->format('Y') == $i ? 'selected' : '' }}>
+
 													{{ $i }}
 												</option>
 											@endfor
