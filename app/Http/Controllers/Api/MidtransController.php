@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\TransactionSuccess;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class MidtransController extends Controller
 {
@@ -32,15 +34,18 @@ class MidtransController extends Controller
                         $transaction->update(['payment_status' => 'pending']);
                     } else {
                         $transaction->update(['payment_status' => 'paid']);
-
-                        foreach ($transaction->passengers as $passenger) {
-                            $passenger->seat->update(['is_available' => false]);
-                        }
                     }
                 }
                 break;
             case 'settlement':
                 $transaction->update(['payment_status' => 'paid']);
+
+                foreach ($transaction->passengers as $passenger) {
+                    $passenger->seat->update(['is_available' => false]);
+                }
+
+                Mail::to($transaction->email)->send(new TransactionSuccess($transaction));
+
                 break;
             case 'pending':
                 $transaction->update(['payment_status' => 'pending']);
